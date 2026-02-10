@@ -27,6 +27,7 @@ import styles from './app.module.css';
 import { FC, useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { checkUserAuth } from '../../services/slices/authSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 
 const ModalSwitch: FC = () => {
   const location = useLocation();
@@ -46,7 +47,6 @@ const ModalSwitch: FC = () => {
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
         <Route path='/feed/:number' element={<OrderInfo />} />
 
-        {/* Защищенные маршруты только для НЕавторизованных */}
         <Route
           path='/login'
           element={
@@ -80,7 +80,6 @@ const ModalSwitch: FC = () => {
           }
         />
 
-        {/* Защищенные маршруты только для авторизованных */}
         <Route
           path='/profile'
           element={
@@ -109,7 +108,6 @@ const ModalSwitch: FC = () => {
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
-      {/* Модальные окна */}
       {background && (
         <Routes>
           <Route
@@ -148,6 +146,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(fetchIngredients());
     dispatch(checkUserAuth());
   }, [dispatch]);
 

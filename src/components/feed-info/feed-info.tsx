@@ -13,17 +13,25 @@ export const FeedInfo: FC = () => {
   const orders = useSelector((state) => state.feed.orders);
   const total = useSelector((state) => state.feed.total);
   const totalToday = useSelector((state) => state.feed.totalToday);
+  const loading = useSelector((state) => state.feed.loading);
+  const error = useSelector((state) => state.feed.error);
 
   const readyOrders = getOrders(orders, 'done');
   const pendingOrders = getOrders(orders, 'pending');
 
-  const feed = { total, totalToday };
+  const feedData = {
+    orders,
+    total,
+    totalToday,
+    isLoading: loading,
+    error
+  };
 
   return (
     <FeedInfoUI
+      feed={feedData}
       readyOrders={readyOrders}
       pendingOrders={pendingOrders}
-      feed={feed}
     />
   );
 };

@@ -28,22 +28,26 @@ export const checkUserAuth = createAsyncThunk(
         dispatch(setUser(response.user));
         return response.user;
       }
-    } catch (error: any) {
-      // Если ошибка 403 или 401, удаляем токены
-      if (error.message.includes('403') || error.message.includes('401')) {
-        setCookie('accessToken', '', { expires: -1 });
-        localStorage.removeItem('refreshToken');
+      return rejectWithValue('Не удалось получить данные пользователя');
+    } catch (error: unknown) {
+      let errorMessage = 'Ошибка проверки авторизации';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        if (errorMessage.includes('403') || errorMessage.includes('401')) {
+          setCookie('accessToken', '', { expires: -1 });
+          localStorage.removeItem('refreshToken');
+        }
       }
 
       dispatch(setUser(null));
-      return rejectWithValue(error.message);
+      return rejectWithValue(errorMessage);
     } finally {
       dispatch(setAuthChecked(true));
     }
   }
 );
 
-// Логин
 export const loginUser = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import { BurgerConstructorElementUI } from '@ui';
 import { TBurgerConstructorElementProps } from './type';
 import { useDispatch } from '../../services/store';
@@ -8,9 +8,12 @@ export const BurgerConstructorElement: FC<TBurgerConstructorElementProps> = ({
   ingredient,
   index,
   totalItems,
-  handleClose
+  handleClose,
+  handleMoveUp,
+  handleMoveDown
 }) => {
   const dispatch = useDispatch();
+  const ref = useRef<HTMLLIElement>(null);
 
   const onClose =
     handleClose ||
@@ -24,6 +27,9 @@ export const BurgerConstructorElement: FC<TBurgerConstructorElementProps> = ({
       index={index}
       totalItems={totalItems}
       handleClose={onClose}
+      ref={ref}
+      handleMoveUp={handleMoveUp}
+      handleMoveDown={handleMoveDown}
     />
   );
 };

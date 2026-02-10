@@ -11,14 +11,11 @@ export const ProfileMenu: FC = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    // Удаляем токены
     setCookie('accessToken', '', { expires: -1 });
     localStorage.removeItem('refreshToken');
 
-    // Очищаем пользователя в сторе
     dispatch(setUser(null));
 
-    // Перенаправляем на логин
     navigate('/login');
   };
 

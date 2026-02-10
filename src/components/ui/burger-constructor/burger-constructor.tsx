@@ -17,7 +17,10 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   orderModalData,
   onOrderClick,
   closeOrderModal,
-  handleRemoveIngredient
+  handleRemoveIngredient,
+  handleMoveUp,
+  handleMoveDown,
+  canMakeOrder
 }) => (
   <section className={styles.burger_constructor}>
     {constructorItems.bun ? (
@@ -47,6 +50,8 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
             totalItems={constructorItems.ingredients.length}
             key={item._id}
             handleClose={() => handleRemoveIngredient?.(index)}
+            handleMoveUp={() => handleMoveUp?.(index)}
+            handleMoveDown={() => handleMoveDown?.(index)}
           />
         ))
       ) : (
@@ -86,12 +91,13 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         type='primary'
         size='large'
         onClick={onOrderClick}
+        disabled={!canMakeOrder}
       >
         Оформить заказ
       </Button>
     </div>
 
-    {orderRequest && (
+    {orderRequest && !orderModalData && (
       <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
         <Preloader />
       </Modal>

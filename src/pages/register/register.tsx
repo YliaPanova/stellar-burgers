@@ -16,7 +16,6 @@ export const Register: FC = () => {
     e.preventDefault();
     setError('');
 
-    // Валидация
     if (!userName.trim() || !email.trim() || !password.trim()) {
       setError('Заполните все поля');
       return;
@@ -28,7 +27,6 @@ export const Register: FC = () => {
     }
 
     try {
-      // Вызываем API регистрации
       const response = await registerUserApi({
         email,
         password,
@@ -47,13 +45,23 @@ export const Register: FC = () => {
       } else {
         setError('Ошибка регистрации');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       let errorMessage = 'Ошибка при регистрации';
 
-      if (err.message) {
+      if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
+      } else if (
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        typeof err.response === 'object' &&
+        err.response !== null &&
+        'data' in err.response &&
+        typeof err.response.data === 'object' &&
+        err.response.data !== null &&
+        'message' in err.response.data
+      ) {
+        errorMessage = (err.response.data as { message: string }).message;
       }
 
       setError(errorMessage);

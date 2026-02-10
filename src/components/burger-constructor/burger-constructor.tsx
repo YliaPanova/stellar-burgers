@@ -5,7 +5,8 @@ import { BurgerConstructorUI } from '../ui/burger-constructor';
 import { createOrder, clearOrder } from '../../services/slices/orderSlice';
 import {
   clearConstructor,
-  removeIngredient
+  removeIngredient,
+  moveIngredient
 } from '../../services/slices/burgerConstructorSlice';
 
 export const BurgerConstructor: FC = () => {
@@ -26,6 +27,18 @@ export const BurgerConstructor: FC = () => {
     dispatch(removeIngredient(index));
   };
 
+  const handleMoveUp = (index: number) => {
+    if (index > 0) {
+      dispatch(moveIngredient({ fromIndex: index, toIndex: index - 1 }));
+    }
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index < ingredients.length - 1) {
+      dispatch(moveIngredient({ fromIndex: index, toIndex: index + 1 }));
+    }
+  };
+
   const onOrderClick = () => {
     if (!user) {
       navigate('/login');
@@ -33,7 +46,6 @@ export const BurgerConstructor: FC = () => {
     }
 
     if (!bun || ingredients.length === 0) {
-      alert('Добавьте булку и начинку для заказа!');
       return;
     }
 
@@ -48,10 +60,6 @@ export const BurgerConstructor: FC = () => {
 
   const closeOrderModal = () => {
     dispatch(clearOrder());
-
-    if (orderModalData) {
-      dispatch(clearConstructor());
-    }
   };
 
   const price = useMemo(() => {
@@ -72,6 +80,9 @@ export const BurgerConstructor: FC = () => {
       onOrderClick={onOrderClick}
       closeOrderModal={closeOrderModal}
       handleRemoveIngredient={handleRemoveIngredient}
+      handleMoveUp={handleMoveUp}
+      handleMoveDown={handleMoveDown}
+      canMakeOrder={!!bun && ingredients.length > 0}
     />
   );
 };

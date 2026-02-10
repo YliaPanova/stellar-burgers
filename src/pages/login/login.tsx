@@ -13,10 +13,8 @@ export const Login: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Берем состояние из Redux
   const { user, isAuthChecked } = useSelector((state) => state.auth);
 
-  // Если пользователь уже авторизован, перенаправляем
   useEffect(() => {
     if (user && isAuthChecked) {
       const from = location.state?.from || '/';
@@ -35,8 +33,14 @@ export const Login: FC = () => {
 
     try {
       await dispatch(loginUser({ email, password })).unwrap();
-    } catch (err: any) {
-      setError(err.message || 'Ошибка авторизации. Проверьте email и пароль.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(
+          err.message || 'Ошибка авторизации. Проверьте email и пароль.'
+        );
+      } else {
+        setError('Произошла неизвестная ошибка');
+      }
     }
   };
 

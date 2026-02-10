@@ -1,21 +1,12 @@
-import { useSelector, useDispatch } from '../../services/store';
+import { useSelector } from '../../services/store';
 import styles from './constructor-page.module.css';
 import { BurgerIngredients } from '../../components';
 import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
 import { FC, useEffect } from 'react';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 
 export const ConstructorPage: FC = () => {
-  const dispatch = useDispatch();
-
-  // Берем данные из стора для отладки
   const { items, loading } = useSelector((state) => state.ingredients);
-
-  // Загружаем ингредиенты при загрузке страницы
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
 
   if (loading) {
     return <Preloader />;
@@ -44,7 +35,6 @@ export const ConstructorPage: FC = () => {
         Соберите бургер
       </h1>
       <div className={`${styles.main} pl-5 pr-5`}>
-        {/* Теперь BurgerIngredients сам берет данные из Redux */}
         <BurgerIngredients />
         <BurgerConstructor />
       </div>

@@ -28,12 +28,12 @@ const ingredientsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Загрузка началась
+
       .addCase(fetchIngredients.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      // Загрузка успешна
+
       .addCase(
         fetchIngredients.fulfilled,
         (state, action: PayloadAction<TIngredient[]>) => {
@@ -41,7 +41,7 @@ const ingredientsSlice = createSlice({
           state.items = action.payload;
         }
       )
-      // Ошибка загрузки
+
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Ошибка загрузки ингредиентов';

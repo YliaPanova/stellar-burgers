@@ -5,7 +5,6 @@ import {
   useSelector as selectorHook
 } from 'react-redux';
 
-// Импортируем редюсеры
 import ingredientsReducer from './slices/ingredientsSlice';
 import burgerConstructorReducer from './slices/burgerConstructorSlice';
 import orderReducer from './slices/orderSlice';
@@ -13,10 +12,8 @@ import authReducer from './slices/authSlice';
 import feedReducer from './slices/feedSlice';
 import userOrdersReducer from './slices/userOrdersSlice';
 
-// Импортируем middleware
 import { socketMiddleware } from './middleware/socketMiddleware';
 
-// Создаем корневой редюсер
 const rootReducer = {
   ingredients: ingredientsReducer,
   burgerConstructor: burgerConstructorReducer,

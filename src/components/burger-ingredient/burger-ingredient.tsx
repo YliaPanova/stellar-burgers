@@ -1,5 +1,4 @@
 import { FC, memo } from 'react';
-
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import { BurgerIngredientUI } from '@ui';
@@ -14,10 +13,6 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     const location = useLocation();
     const dispatch = useDispatch();
 
-    // Получаем данные конструктора
-    const constructorState = useSelector((state) => state.burgerConstructor);
-
-    // Подсчет количества
     const count = useSelector((state) => {
       let count = 0;
 
@@ -32,7 +27,7 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
         }
       });
 
-      return count;
+      return count > 0 ? count : undefined;
     });
 
     const handleAdd = () => {

@@ -8,7 +8,6 @@ export const IngredientsCategory = forwardRef<
   HTMLUListElement,
   TIngredientsCategoryProps
 >(({ title, titleRef, ingredients }, ref) => {
-  // Берем данные конструктора из Redux store
   const constructorState = useSelector((state) => state.burgerConstructor);
   const bun = constructorState?.bun || null;
   const constructorIngredients = constructorState?.ingredients || [];
@@ -16,13 +15,11 @@ export const IngredientsCategory = forwardRef<
   const ingredientsCounters = useMemo(() => {
     const counters: { [key: string]: number } = {};
 
-    // Считаем начинки
     constructorIngredients.forEach((ingredient: TIngredient) => {
       if (!counters[ingredient._id]) counters[ingredient._id] = 0;
       counters[ingredient._id]++;
     });
 
-    // Считаем булку
     if (bun && bun._id) {
       counters[bun._id] = 2;
     }

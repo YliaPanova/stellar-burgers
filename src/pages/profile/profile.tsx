@@ -3,11 +3,17 @@ import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
 import { setUser } from '../../services/slices/authSlice';
 import { updateUserApi } from '../../utils/burger-api';
+import { TUser } from '@utils-types';
+
+type TUpdateUserData = {
+  name?: string;
+  email?: string;
+  password?: string;
+};
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
 
-  // Берем пользователя из стора
   const user = useSelector((state) => state.auth.user);
 
   const [formValue, setFormValue] = useState({
@@ -18,7 +24,6 @@ export const Profile: FC = () => {
 
   const [updateUserError, setUpdateUserError] = useState('');
 
-  // Заполняем форму при загрузке или изменении пользователя
   useEffect(() => {
     if (user) {
       setFormValue({
@@ -29,7 +34,6 @@ export const Profile: FC = () => {
     }
   }, [user]);
 
-  // Проверяем изменилась ли форма
   const isFormChanged =
     formValue.name !== (user?.name || '') ||
     formValue.email !== (user?.email || '') ||
@@ -42,33 +46,31 @@ export const Profile: FC = () => {
     if (!user) return;
 
     try {
-      // Готовим данные для обновления
-      const updateData: any = {};
+      const updateData: TUpdateUserData = {};
       if (formValue.name !== user.name) updateData.name = formValue.name;
       if (formValue.email !== user.email) updateData.email = formValue.email;
       if (formValue.password) updateData.password = formValue.password;
 
-      // Если есть что обновлять
       if (Object.keys(updateData).length > 0) {
         const response = await updateUserApi(updateData);
 
         if (response.success) {
-          // Обновляем пользователя в сторе
-          dispatch(setUser(response.user));
-          // Очищаем поле пароля
+          dispatch(setUser(response.user as TUser));
           setFormValue((prev) => ({ ...prev, password: '' }));
-          alert('Данные обновлены успешно!');
         }
       }
-    } catch (err: any) {
-      console.error('Ошибка обновления профиля:', err);
-      setUpdateUserError(err.message || 'Ошибка обновления данных');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setUpdateUserError(err.message || 'Ошибка обновления данных');
+      } else {
+        setUpdateUserError('Произошла неизвестная ошибка');
+      }
     }
   };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
-    // Возвращаем исходные значения
+
     if (user) {
       setFormValue({
         name: user.name || '',
