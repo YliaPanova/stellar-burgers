@@ -1,14 +1,39 @@
-import { useState, useRef, useEffect, FC } from 'react';
+import { useState, useRef, useEffect, FC, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-
+import { useSelector } from '../../services/store';
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
-  const buns = [];
-  const mains = [];
-  const sauces = [];
+  const ingredients = useSelector((state) => state.ingredients.items);
+  const constructorState = useSelector((state) => state.burgerConstructor);
+
+  const bun = constructorState?.bun || null;
+  const ingredientsList = Array.isArray(constructorState?.ingredients)
+    ? constructorState.ingredients
+    : [];
+
+  const getIngredientCount = useMemo(() => {
+    const counts: { [key: string]: number } = {};
+
+    if (bun) {
+      counts[bun._id] = 2;
+    }
+
+    if (ingredientsList && Array.isArray(ingredientsList)) {
+      ingredientsList.forEach((ingredient) => {
+        if (ingredient && ingredient._id) {
+          counts[ingredient._id] = (counts[ingredient._id] || 0) + 1;
+        }
+      });
+    }
+
+    return counts;
+  }, [bun, ingredientsList]);
+
+  const buns = ingredients.filter((item) => item.type === 'bun');
+  const mains = ingredients.filter((item) => item.type === 'main');
+  const sauces = ingredients.filter((item) => item.type === 'sauce');
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -46,8 +71,6 @@ export const BurgerIngredients: FC = () => {
     if (tab === 'sauce')
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  return null;
 
   return (
     <BurgerIngredientsUI

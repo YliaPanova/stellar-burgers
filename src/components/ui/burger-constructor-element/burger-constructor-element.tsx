@@ -1,34 +1,78 @@
-import React, { FC, memo } from 'react';
+import React, { forwardRef } from 'react';
+import {
+  ConstructorElement,
+  ArrowUpIcon,
+  ArrowDownIcon
+} from '@zlden/react-developer-burger-ui-components';
 import styles from './burger-constructor-element.module.css';
-import { ConstructorElement } from '@zlden/react-developer-burger-ui-components';
 import { BurgerConstructorElementUIProps } from './type';
-import { MoveButton } from '@zlden/react-developer-burger-ui-components';
 
-export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
-  memo(
-    ({
+export const BurgerConstructorElementUI = forwardRef<
+  HTMLLIElement,
+  BurgerConstructorElementUIProps
+>(
+  (
+    {
       ingredient,
       index,
       totalItems,
+      handleClose,
+      isDragging,
       handleMoveUp,
-      handleMoveDown,
-      handleClose
-    }) => (
-      <li className={`${styles.element} mb-4 mr-2`}>
-        <MoveButton
-          handleMoveDown={handleMoveDown}
-          handleMoveUp={handleMoveUp}
-          isUpDisabled={index === 0}
-          isDownDisabled={index === totalItems - 1}
-        />
-        <div className={`${styles.element_fullwidth} ml-2`}>
-          <ConstructorElement
-            text={ingredient.name}
-            price={ingredient.price}
-            thumbnail={ingredient.image}
-            handleClose={handleClose}
-          />
-        </div>
-      </li>
-    )
-  );
+      handleMoveDown
+    },
+    ref
+  ) => (
+    <li
+      ref={ref}
+      className={`${styles.element} ${isDragging ? styles.dragging : ''}`}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          marginRight: '8px'
+        }}
+      >
+        {index > 0 && handleMoveUp && (
+          <button
+            onClick={handleMoveUp}
+            type='button'
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '4px',
+              cursor: 'pointer',
+              lineHeight: '1'
+            }}
+          >
+            <ArrowUpIcon type='primary' />
+          </button>
+        )}
+
+        {index < totalItems - 1 && handleMoveDown && (
+          <button
+            onClick={handleMoveDown}
+            type='button'
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '4px',
+              cursor: 'pointer',
+              lineHeight: '1'
+            }}
+          >
+            <ArrowDownIcon type='primary' />
+          </button>
+        )}
+      </div>
+
+      <ConstructorElement
+        text={ingredient.name}
+        price={ingredient.price}
+        thumbnail={ingredient.image}
+        handleClose={handleClose}
+      />
+    </li>
+  )
+);
