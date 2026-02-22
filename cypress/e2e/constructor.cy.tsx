@@ -35,53 +35,30 @@ describe('Конструктор бургера', () => {
     );
   });
 
-  it('Должен открывать страницу с деталями ингредиента', () => {
+  it('Должен открывать модальное окно с деталями ингредиента', () => {
     cy.contains('Краторная булка N-200i').click();
-
-    cy.url().should('include', '/ingredients/643d69a5c3f7b9001cfa093c');
-
-    cy.contains('Краторная булка N-200i', { timeout: 10000 }).should(
-      'be.visible'
-    );
-
-    cy.contains('Калории, ккал').should('be.visible');
-    cy.contains('Белки, г').should('be.visible');
-    cy.contains('Жиры, г').should('be.visible');
-    cy.contains('Углеводы, г').should('be.visible');
-  });
-
-  it('Должен возвращаться на главную по клику на крестик', () => {
-    cy.contains('Краторная булка N-200i').click();
-    cy.contains('Краторная булка N-200i', { timeout: 10000 }).should(
-      'be.visible'
-    );
-
-    cy.go('back');
-
-    cy.wait(1000);
-
-    cy.url().should('eq', 'http://localhost:4000/');
-
-    cy.contains('Соберите бургер').should('be.visible');
-
+    cy.contains('Детали ингредиента').should('be.visible');
     cy.contains('Краторная булка N-200i').should('be.visible');
   });
 
-  it('Должен возвращаться на главную по клику на оверлей (кнопка назад)', () => {
+  it('Должен закрывать модальное окно по клику на крестик', () => {
     cy.contains('Краторная булка N-200i').click();
-    cy.contains('Краторная булка N-200i', { timeout: 10000 }).should(
-      'be.visible'
-    );
+    cy.contains('Детали ингредиента').should('be.visible');
 
-    cy.go('back');
+    cy.get('[class*="Z7mUFPBZScxutAKTLKHN"]').click();
 
-    cy.wait(1000);
-
+    cy.contains('Детали ингредиента').should('not.exist');
     cy.url().should('eq', 'http://localhost:4000/');
+  });
 
-    cy.contains('Соберите бургер').should('be.visible');
+  it('Должен закрывать модальное окно по клику на оверлей', () => {
+    cy.contains('Краторная булка N-200i').click();
+    cy.contains('Детали ингредиента').should('be.visible');
 
-    cy.contains('Краторная булка N-200i').should('be.visible');
+    cy.get('[class*="RuQycGaRTQNbnIEC5d3Y"]').click({ force: true });
+
+    cy.contains('Детали ингредиента').should('not.exist');
+    cy.url().should('eq', 'http://localhost:4000/');
   });
 });
 
@@ -90,11 +67,9 @@ describe('Создание заказа', () => {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' }).as(
       'getIngredients'
     );
-
     cy.intercept('GET', 'api/auth/user', { fixture: 'user.json' }).as(
       'getUser'
     );
-
     cy.intercept('POST', 'api/orders', { fixture: 'order.json' }).as(
       'createOrder'
     );
@@ -121,16 +96,13 @@ describe('Создание заказа', () => {
       });
 
     cy.contains('button', 'Оформить заказ').click();
-
     cy.wait('@createOrder');
 
     cy.contains('12345', { timeout: 10000 }).should('be.visible');
     cy.contains('идентификатор заказа').should('be.visible');
 
     cy.wait(1000);
-
     cy.get('body').type('{esc}');
-
     cy.wait(500);
 
     cy.get('.constructor-element__text', { timeout: 10000 }).should(
